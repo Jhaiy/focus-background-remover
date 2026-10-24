@@ -12,14 +12,14 @@ services:
         value: "24"
       - key: ONNXRUNTIME_NODE_INSTALL_CUDA
         value: skip
-      # Free tier has 512 MB RAM: use the small model and limit image size.
+      # Free tier has 512 MB RAM: use the small model and downscale uploads.
       - key: MODELS
         value: u2netp.onnx
       - key: MODEL_PATH
         value: src/model/u2netp.onnx
       - key: MAX_CONCURRENT_REQUESTS
         value: "1"
-      - key: MAX_PIXELS
-        value: "12000000"
+      - key: MAX_IMAGE_DIMENSION
+        value: "1600"
       - key: MAX_FILE_SIZE_MB
-        value: "10"
+        value: "25"

@@ -37,10 +37,11 @@ node --env-file=.env src/server.ts
 | `MODEL_PATH` | `./src/model/u2net.onnx` | Model file to load |
 | `MODELS` | `u2net.onnx,u2netp.onnx` | Models the download script fetches |
 | `MAX_FILE_SIZE_MB` | `30` | Largest upload accepted |
+| `MAX_IMAGE_DIMENSION` | `0` (off) | Scale uploads down so the longest side is at most this many pixels; the result is returned at that size |
 | `MAX_PIXELS` | `40000000` | Largest image (width × height) accepted |
 
 ### Deploying on Render
-`render.yaml` is a Blueprint for Render's free tier (512 MB RAM). It uses the small `u2netp` model, one image at a time, and a 12 megapixel limit. On a larger host, remove those variables to use the full `u2net` model.
+`render.yaml` is a Blueprint for Render's free tier (512 MB RAM). It uses the small `u2netp` model, one image at a time, and scales uploads down to 1600 px on the longest side. On a larger host, remove those variables to use the full `u2net` model.
 
 ## Endpoints
 

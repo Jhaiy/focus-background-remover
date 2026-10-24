@@ -5,6 +5,7 @@ export const config = {
     maxConcurrentRequests: Number(process.env.MAX_CONCURRENT_REQUESTS ?? 2),
     maxFileSize: Number(process.env.MAX_FILE_SIZE_MB ?? 30) * 1024 * 1024,
     maxPixels: Number(process.env.MAX_PIXELS ?? 40_000_000),
+    maxImageDimension: Number(process.env.MAX_IMAGE_DIMENSION ?? 0),
     allowedFormats: ['jpeg', 'png', 'webp'],
     rateLimit: {
         windowMs: 60_000,

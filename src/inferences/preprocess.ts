@@ -1,10 +1,16 @@
 import sharp from 'sharp';
 import * as ort from 'onnxruntime-node';
 
-export async function preprocessImage(buffer: Buffer, { size, mean, std }: { size: number; mean: number[]; std: number[] }) {
-    // Full-resolution RGBA; postprocess writes the mask into its alpha channel.
-    const { data, info } = await sharp(buffer)
-        .rotate()
+export async function preprocessImage(
+    buffer: Buffer,
+    { size, mean, std }: { size: number; mean: number[]; std: number[] },
+    maxDimension = 0,
+) {
+    let image = sharp(buffer).rotate();
+    if (maxDimension > 0) {
+        image = image.resize({ width: maxDimension, height: maxDimension, fit: 'inside', withoutEnlargement: true });
+    }
+    const { data, info } = await image
         .ensureAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true });

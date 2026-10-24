@@ -8,7 +8,7 @@ const limit = createLimiter(config.maxConcurrentRequests);
 
 export async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
     return limit(async () => {
-        const { tensor, original } = await preprocessImage(imageBuffer, config.model);
+        const { tensor, original } = await preprocessImage(imageBuffer, config.model, config.maxImageDimension);
         const session = getSession();
         const output = await session.run({ [session.inputNames[0]]: tensor });
         return postprocessImage(output[session.outputNames[0]], original);
