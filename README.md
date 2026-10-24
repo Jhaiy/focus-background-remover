@@ -1,4 +1,4 @@
-# focus-background-remover
+# FOCUS: Background Remover
 A free open-source API endpoint for removing image backgrounds.
 
 Upload an image, get back a PNG with a transparent background. It runs the U²-Net model locally with ONNX Runtime, so no external services are needed.
