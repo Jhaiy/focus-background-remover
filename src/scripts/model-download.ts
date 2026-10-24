@@ -4,7 +4,8 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
 const BASE = 'https://github.com/danielgatis/rembg/releases/download/v0.0.0';
-const MODELS = ['u2net.onnx', 'u2netp.onnx'];
+// MODELS=u2netp.onnx limits the download to one model (comma separated list).
+const MODELS = (process.env.MODELS ?? 'u2net.onnx,u2netp.onnx').split(',');
 const DIR = new URL('../model/', import.meta.url);
 
 await mkdir(DIR, { recursive: true });

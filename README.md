@@ -1,16 +1,10 @@
----
-title: Focus Background Remover
-emoji: ✂️
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-app_port: 7860
----
-
 # focus-background-remover
 A free open-source API endpoint for removing image backgrounds.
 
 Upload an image, get back a PNG with a transparent background. It runs the U²-Net model locally with ONNX Runtime, so no external services are needed.
+
+### Dev Notes:
+Hi! Dev here. This is a simple open-source API tool that you can use on your own end and host on your own machine. This is just a tiny project because I'm tired of using online SaaS that compresses your file too much or limit you too much. Using this, you are in complete control of the whole setup and configurations. Happy tooling!
 
 ## Requirements
 - Node.js 24 or newer (runs the TypeScript files directly, no build step)
@@ -41,6 +35,12 @@ node --env-file=.env src/server.ts
 | `MAX_CONCURRENT_REQUESTS` | `2` | Images processed at once; extra requests get `503` |
 | `RATE_LIMIT_MAX` | `30` | Requests per minute per IP |
 | `MODEL_PATH` | `./src/model/u2net.onnx` | Model file to load |
+| `MODELS` | `u2net.onnx,u2netp.onnx` | Models the download script fetches |
+| `MAX_FILE_SIZE_MB` | `30` | Largest upload accepted |
+| `MAX_PIXELS` | `40000000` | Largest image (width × height) accepted |
+
+### Deploying on Render
+`render.yaml` is a Blueprint for Render's free tier (512 MB RAM). It uses the small `u2netp` model, one image at a time, and a 12 megapixel limit. On a larger host, remove those variables to use the full `u2net` model.
 
 ## Endpoints
 

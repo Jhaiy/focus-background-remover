@@ -6,7 +6,10 @@ let session: ort.InferenceSession | null = null;
 export async function loadSession() {
     session = await ort.InferenceSession.create(config.modelPath, {
         executionProviders: config.useGpu ? ['cuda', 'cpu'] : ['cpu'],
-        graphOptimizationLevel: 'all',
+        graphOptimizationLevel: 'basic',
+        enableCpuMemArena: false,
+        enableMemPattern: false,
+        intraOpNumThreads: 1,
     });
 
     const { size } = config.model;
