@@ -28,20 +28,47 @@ node --env-file=.env src/server.ts
 ```
 
 ### Configuration
+Settings are environment variables. Locally, put them in `.env` and start with `--env-file=.env` as shown above. On a host like Render, set them in its dashboard.
+
+**Runtime**
+
 | Variable | Default | Description |
 |---|---|---|
 | `PORT` | `3000` | Port to listen on |
-| `USE_GPU` | `false` | Use CUDA when `true` (falls back to CPU) |
+| `USE_GPU` | `false` | Use CUDA when `true` (needs an NVIDIA GPU and CUDA; falls back to CPU) |
+| `MODEL_PATH` | `./src/model/u2net.onnx` | Model file to load. `u2netp.onnx` is smaller and faster, `u2net.onnx` is more accurate |
 | `MAX_CONCURRENT_REQUESTS` | `2` | Images processed at once; extra requests get `503` |
 | `RATE_LIMIT_MAX` | `30` | Requests per minute per IP |
-| `MODEL_PATH` | `./src/model/u2net.onnx` | Model file to load |
-| `MODELS` | `u2net.onnx,u2netp.onnx` | Models the download script fetches |
-| `MAX_FILE_SIZE_MB` | `30` | Largest upload accepted |
-| `MAX_IMAGE_DIMENSION` | `0` (off) | Scale uploads down so the longest side is at most this many pixels; the result is returned at that size |
-| `MAX_PIXELS` | `40000000` | Largest image (width × height) accepted |
+| `MAX_FILE_SIZE_MB` | `30` | Largest upload accepted, in megabytes |
+| `MAX_PIXELS` | `40000000` | Largest upload accepted by width × height. Larger images get `413` |
+| `MAX_IMAGE_DIMENSION` | `0` (off) | Scale uploads down so the longest side is at most this many pixels. The result is returned at the scaled size. Lower it to use less memory |
+
+**Install and build time**
+
+| Variable | Default | Description |
+|---|---|---|
+| `MODELS` | `u2net.onnx,u2netp.onnx` | Comma separated models the download script fetches. Set it to the model you use to save time and disk |
+| `ONNXRUNTIME_NODE_INSTALL_CUDA` | not set | Set to `skip` to avoid downloading the large CUDA libraries when you don't use a GPU |
+| `NODE_VERSION` | host default | Node version for hosts like Render. Use 24 or newer |
+
+Example `.env` for a small host (about 512 MB RAM):
+
+```bash
+PORT=3000
+USE_GPU=false
+MODEL_PATH=src/model/u2netp.onnx
+MODELS=u2netp.onnx
+MAX_CONCURRENT_REQUESTS=1
+MAX_FILE_SIZE_MB=25
+MAX_IMAGE_DIMENSION=1600
+MAX_PIXELS=40000000
+RATE_LIMIT_MAX=30
+ONNXRUNTIME_NODE_INSTALL_CUDA=skip
+NODE_VERSION=24
+```
 
 ### Deploying on Render
-`render.yaml` is a Blueprint for Render's free tier (512 MB RAM). It uses the small `u2netp` model, one image at a time, and scales uploads down to 1600 px on the longest side. On a larger host, remove those variables to use the full `u2net` model.
+`render.yaml` is a Blueprint for Render's free tier (512 MB RAM). It uses the small `u2netp` model, one image at a time, and scales uploads down to 1600 px on the longest side. If you create the service by hand instead of from the Blueprint, add the same variables in the dashboard. On a larger host, remove those variables to use the full `u2net` model at full resolution.
 
 ## Endpoints
 
@@ -53,14 +80,14 @@ Removes the background from an image.
 | Limit | Value |
 |---|---|
 | Formats | JPEG, PNG, WebP |
-| File size | 30 MB |
-| Dimensions | 40 million pixels |
+| File size | `MAX_FILE_SIZE_MB` (default 30 MB) |
+| Dimensions | `MAX_PIXELS` (default 40 million pixels) |
 
 ```bash
 curl -f -F image=@photo.jpg http://localhost:3000/v1/focus -o result.png
 ```
 
-**Response:** `200` with `Content-Type: image/png`. The image keeps its original size and has an alpha channel.
+**Response:** `200` with `Content-Type: image/png`. The image has an alpha channel and keeps its original size, unless `MAX_IMAGE_DIMENSION` is set. Then images larger than that are scaled down.
 
 **Errors** are returned as JSON, `{"error": "message"}`:
 
