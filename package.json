@@ -4,7 +4,7 @@
   "description": "Focus is the API Backend of the Background Remover APP",
   "author": "Jhay-dev",
   "type": "module",
-  "main": "src/app.ts",
+  "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.ts",

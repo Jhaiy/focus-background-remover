@@ -5,4 +5,4 @@ import { logger } from './utils/logger.ts';
 
 await loadSession();
 
-app.listen(config.port, () => logger.info(`Focus listening on port ${config.port}`));
+app.listen(config.port, '0.0.0.0', () => logger.info(`Focus listening on port ${config.port}`));

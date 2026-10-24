@@ -1,0 +1,6 @@
+node_modules
+src/model/*.onnx
+.env
+.env.*
+.git
+*.log

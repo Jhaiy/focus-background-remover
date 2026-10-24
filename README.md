@@ -1,3 +1,12 @@
+---
+title: Focus Background Remover
+emoji: ✂️
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+app_port: 7860
+---
+
 # focus-background-remover
 A free open-source API endpoint for removing image backgrounds.
 
